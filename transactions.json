@@ -1,0 +1,4 @@
+[
+    {"id": 1, "codigo_transaccion": "1ff345gc", "moneda": "USD", "monto": 1100, "emisor": "Pepito", "receptor": "Alfred", "fecha_transaccion": "22-12-2021"},
+    {"id": 2, "codigo_transaccion": "3gh563ad", "moneda": "USD", "monto": 500, "emisor": "Alguien", "receptor": "El", "fecha_transaccion": "22-12-2021"}
+]
