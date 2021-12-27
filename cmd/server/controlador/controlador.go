@@ -108,3 +108,103 @@ func (t *Transaction) Store() gin.HandlerFunc {
 		t.service.Store(trnsRequest)
 	}
 }
+
+func (t *Transaction) Update() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id := c.Param("id")
+		intId, _ := strconv.Atoi(id)
+
+		camposRequeridos := []string{"Codigo", "Moneda", "Monto", "Emisor", "Receptor", "Fecha"}
+		var modified transacciones.Transaction
+
+		if err := c.ShouldBindJSON(&modified); err != nil {
+			c.JSON(404, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		for _, campo := range camposRequeridos {
+			value, err := t.service.GetField(&modified, campo)
+
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			if value == nil {
+				c.String(400, "el campo %s es requerido", value)
+				return
+			}
+		}
+
+		newT, err := t.service.Update(modified, intId)
+
+		if err != nil {
+			c.JSON(404, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(200, newT)
+	}
+}
+
+func (t *Transaction) Delete() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id := c.Param("id")
+		intId, _ := strconv.Atoi(id)
+
+		if t.service.Delete(intId) != nil {
+			c.JSON(404, gin.H{
+				"error": t.service.Delete(intId).Error(),
+			})
+			return
+		}
+		c.JSON(200, gin.H{
+			"success": true,
+		})
+	}
+}
+
+func (t *Transaction) Patch() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id := c.Param("id")
+		intId, _ := strconv.Atoi(id)
+
+		var modified transacciones.Transaction
+
+		if err := c.ShouldBindJSON(&modified); err != nil {
+			c.JSON(404, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if modified.Codigo == "" {
+			c.JSON(400, gin.H{
+				"error": "el codigo de la transaccion es requerido",
+			})
+			return
+		}
+
+		if modified.Monto == 0 {
+			c.JSON(400, gin.H{
+				"error": "el codigo de la transaccion es requerido",
+			})
+			return
+		}
+
+		newT, err := t.service.Patch(intId, modified.Codigo, modified.Monto)
+
+		if err != nil {
+			c.JSON(404, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(200, newT)
+	}
+}

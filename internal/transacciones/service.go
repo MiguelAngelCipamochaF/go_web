@@ -8,6 +8,9 @@ type Service interface {
 	GetField(v interface{}, name string) (interface{}, error)
 	GenID() int
 	Store(tRequest Transaction)
+	Update(newT Transaction, id int) (Transaction, error)
+	Delete(id int) error
+	Patch(id int, codigo string, monto int) (Transaction, error)
 }
 
 type service struct {
@@ -48,4 +51,28 @@ func (s *service) GenID() int {
 
 func (s *service) Store(tRequest Transaction) {
 	s.repo.Store(tRequest)
+}
+
+func (s *service) Update(newT Transaction, id int) (Transaction, error) {
+	modT, err := s.repo.Update(newT, id)
+
+	if err != nil {
+		return Transaction{}, err
+	}
+
+	return modT, nil
+}
+
+func (s *service) Delete(id int) error {
+	return s.repo.Delete(id)
+}
+
+func (s *service) Patch(id int, codigo string, monto int) (Transaction, error) {
+	transaction, err := s.repo.Patch(id, codigo, monto)
+
+	if err != nil {
+		return Transaction{}, err
+	}
+
+	return transaction, nil
 }

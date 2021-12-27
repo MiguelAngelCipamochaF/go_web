@@ -24,6 +24,9 @@ type Repository interface {
 	GetField(v interface{}, name string) (interface{}, error)
 	GenID() int
 	Store(tRequest Transaction)
+	Update(newT Transaction, id int) (Transaction, error)
+	Delete(id int) error
+	Patch(id int, codigo string, monto int) (Transaction, error)
 }
 
 type repository struct {
@@ -96,4 +99,37 @@ func (r *repository) GenID() int {
 
 func (r *repository) Store(tRequest Transaction) {
 	transacciones = append(transacciones, tRequest)
+}
+
+func (r *repository) Update(newT Transaction, id int) (Transaction, error) {
+	for i, _ := range transacciones {
+		if transacciones[i].ID == id {
+			transacciones[i] = newT
+			transacciones[i].ID = id
+			return transacciones[i], nil
+		}
+	}
+	return Transaction{}, fmt.Errorf("error: no existe transaccion con ID: %d", id)
+}
+
+func (r *repository) Delete(id int) error {
+	for i, _ := range transacciones {
+		if transacciones[i].ID == id {
+			transacciones = append(transacciones[:i], transacciones[i+1:]...)
+			return nil
+		}
+	}
+
+	return fmt.Errorf("error: no existe transaccion con ID: %v", id)
+}
+
+func (r *repository) Patch(id int, codigo string, monto int) (Transaction, error) {
+	for i, _ := range transacciones {
+		if transacciones[i].ID == id {
+			transacciones[i].Codigo = codigo
+			transacciones[i].Monto = monto
+			return transacciones[i], nil
+		}
+	}
+	return Transaction{}, fmt.Errorf("error: no existe transaccion con ID: %v", id)
 }

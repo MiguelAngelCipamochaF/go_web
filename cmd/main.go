@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/MiguelAngelCipamochaF/go-web/cmd/server/controlador"
 	"github.com/MiguelAngelCipamochaF/go-web/internal/transacciones"
-	"github.com/MiguelAngelCipamochaF/go-web/server/controlador"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,8 +21,14 @@ func main() {
 		})
 	})
 
-	router.GET("/transacciones", controller.GetAll())
-	router.POST("/transacciones/", controller.Store())
-	router.GET("/transacciones/:id", controller.GetByID())
+	trns := router.Group("/transacciones")
+	{
+		trns.GET("/", controller.GetAll())
+		trns.GET("/:id", controller.GetByID())
+		trns.POST("/", controller.Store())
+		trns.PUT("/:id", controller.Update())
+		trns.DELETE("/:id", controller.Delete())
+		trns.PATCH("/:id", controller.Patch())
+	}
 	router.Run()
 }
