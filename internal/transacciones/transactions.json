@@ -1,0 +1,6 @@
+[
+    {"id": 1, "codigo": "1ff345gc", "moneda": "USD", "monto": 1100, "emisor": "Pepito", "receptor": "Alfred", "fecha": "22-12-2021"},
+    {"id": 2, "codigo": "3gh563ad", "moneda": "USD", "monto": 500, "emisor": "Alguien", "receptor": "El", "fecha": "22-12-2021"},
+    {"id": 3, "codigo": "3Db998Ty", "moneda": "COP", "monto": 5605000, "emisor": "Miguel", "receptor": "Luigy", "fecha": "21-12-2021"},
+    {"id": 4, "codigo": "4Bg298HG", "moneda": "COP", "monto": 1403400, "emisor": "Miguel", "receptor": "Mario", "fecha": "21-12-2021"}
+]
