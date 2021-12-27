@@ -1,7 +1,7 @@
 package controlador
 
 import (
-	"github.com/MiguelAngelCipamochaFigueredo/internal/transacciones"
+	"github.com/MiguelAngelCipamochaF/internal/transacciones"
 	"github.com/gin-gonic/gin"
 )
 

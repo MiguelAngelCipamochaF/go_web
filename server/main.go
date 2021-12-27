@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/MiguelAngelCipamochaFigueredo/go-web/internal/transacciones"
+	"github.com/MiguelAngelCipamochaF/go-web/internal/transacciones"
 	"github.com/gin-gonic/gin"
 )
 
