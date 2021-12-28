@@ -3,11 +3,11 @@ package transacciones
 import "fmt"
 
 type Service interface {
-	GetAll() []Transaction
-	GetByID(id int) *Transaction
+	GetAll() ([]Transaction, error)
+	GetByID(id int) (Transaction, error)
 	GetField(v interface{}, name string) (interface{}, error)
-	GenID() int
-	Store(tRequest Transaction)
+	GenID() (int, error)
+	Store(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (Transaction, error)
 	Update(newT Transaction, id int) (Transaction, error)
 	Delete(id int) error
 	Patch(id int, codigo string, monto int) (Transaction, error)
@@ -23,14 +23,20 @@ func NewService(s Repository) Service {
 	}
 }
 
-func (s *service) GetAll() []Transaction {
-	ts := s.repo.GetAll()
-	return ts
+func (s *service) GetAll() ([]Transaction, error) {
+	ts, err := s.repo.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	return ts, nil
 }
 
-func (s *service) GetByID(id int) *Transaction {
-	tid := s.repo.GetByID(id)
-	return tid
+func (s *service) GetByID(id int) (Transaction, error) {
+	tid, err := s.repo.GetByID(id)
+	if err != nil {
+		return Transaction{}, err
+	}
+	return tid, nil
 }
 
 func (s *service) GetField(v interface{}, name string) (interface{}, error) {
@@ -44,13 +50,24 @@ func (s *service) GetField(v interface{}, name string) (interface{}, error) {
 	return tGetField, nil
 }
 
-func (s *service) GenID() int {
-	tGenId := s.repo.GenID()
-	return tGenId
+func (s *service) GenID() (int, error) {
+	tGenId, err := s.repo.GenID()
+
+	if err != nil {
+		return 0, err
+	}
+
+	return tGenId, nil
 }
 
-func (s *service) Store(tRequest Transaction) {
-	s.repo.Store(tRequest)
+func (s *service) Store(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (Transaction, error) {
+	transaction, err := s.repo.Store(id, codigo, moneda, monto, emisor, receptor, fecha)
+
+	if err != nil {
+		return Transaction{}, err
+	}
+
+	return transaction, nil
 }
 
 func (s *service) Update(newT Transaction, id int) (Transaction, error) {

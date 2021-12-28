@@ -2,6 +2,7 @@ package controlador
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/MiguelAngelCipamochaF/go-web/internal/transacciones"
@@ -23,7 +24,13 @@ func NewTransaction(t transacciones.Service) *Transaction {
 
 func (t *Transaction) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		transactions := t.service.GetAll()
+		transactions, err := t.service.GetAll()
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
 		id := ctx.Query("id")
 		intID, _ := strconv.Atoi(id)
 		codigo := ctx.Query("codigo")
@@ -36,10 +43,11 @@ func (t *Transaction) GetAll() gin.HandlerFunc {
 
 		if id != "" || codigo != "" || moneda != "" || monto != "" || emisor != "" || receptor != "" || fecha != "" {
 			var filtrados []transacciones.Transaction
-
+			fmt.Println(moneda)
 			for _, t := range transactions {
 				if intID == t.ID || codigo == t.Codigo || intMonto == t.Monto || moneda == t.Moneda || emisor == t.Emisor || receptor == t.Receptor || fecha == t.Fecha {
 					filtrados = append(filtrados, t)
+					fmt.Println(filtrados)
 				}
 			}
 
@@ -55,15 +63,16 @@ func (t *Transaction) GetByID() gin.HandlerFunc {
 		id := ctx.Param("id")
 		intId, _ := strconv.Atoi(id)
 
-		filtrado := t.service.GetByID(intId)
+		filtrado, err := t.service.GetByID(intId)
 
-		if filtrado != nil {
-			ctx.JSON(200, filtrado)
-		} else {
+		if err != nil {
 			ctx.JSON(404, gin.H{
-				"message": "Error",
+				"error": err.Error(),
 			})
+			return
 		}
+
+		ctx.JSON(200, filtrado)
 	}
 }
 
@@ -71,7 +80,7 @@ func (t *Transaction) Store() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("token")
 
-		if token != "123456" {
+		if token != os.Getenv("TOKEN") {
 			c.JSON(401, gin.H{
 				"error": "no tiene permisos para realizar la peticion solicitada",
 			})
@@ -102,10 +111,11 @@ func (t *Transaction) Store() gin.HandlerFunc {
 			}
 		}
 
-		trnsRequest.ID = t.service.GenID()
+		trnsRequest.ID, _ = t.service.GenID()
+
 		c.JSON(200, trnsRequest)
 
-		t.service.Store(trnsRequest)
+		t.service.Store(trnsRequest.ID, trnsRequest.Codigo, trnsRequest.Moneda, trnsRequest.Monto, trnsRequest.Emisor, trnsRequest.Receptor, trnsRequest.Fecha)
 	}
 }
 

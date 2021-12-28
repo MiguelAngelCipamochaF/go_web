@@ -3,12 +3,15 @@ package main
 import (
 	"github.com/MiguelAngelCipamochaF/go-web/cmd/server/controlador"
 	"github.com/MiguelAngelCipamochaF/go-web/internal/transacciones"
+	"github.com/MiguelAngelCipamochaF/go-web/pkg/store"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-
-	repo := transacciones.NewRepository()
+	_ = godotenv.Load()
+	db := store.New(store.FileType, "./transacciones.json")
+	repo := transacciones.NewRepository(db)
 	service := transacciones.NewService(repo)
 	controller := controlador.NewTransaction(service)
 

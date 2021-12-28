@@ -1,11 +1,11 @@
 package transacciones
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"reflect"
+
+	"github.com/MiguelAngelCipamochaF/go-web/pkg/store"
 )
 
 type Transaction struct {
@@ -19,47 +19,47 @@ type Transaction struct {
 }
 
 type Repository interface {
-	GetAll() []Transaction
-	GetByID(id int) *Transaction
+	GetAll() ([]Transaction, error)
+	GetByID(id int) (Transaction, error)
 	GetField(v interface{}, name string) (interface{}, error)
-	GenID() int
-	Store(tRequest Transaction)
+	GenID() (int, error)
+	Store(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (Transaction, error)
 	Update(newT Transaction, id int) (Transaction, error)
 	Delete(id int) error
 	Patch(id int, codigo string, monto int) (Transaction, error)
 }
 
 type repository struct {
+	db store.Store
 }
 
 var transacciones []Transaction
 
-func NewRepository() Repository {
-	data, e := ioutil.ReadFile("./internal/transacciones/transactions.json")
-
-	if e != nil {
-		fmt.Println(e)
+func NewRepository(db store.Store) Repository {
+	return &repository{
+		db: db,
 	}
-
-	err := json.Unmarshal(data, &transacciones)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	return &repository{}
 }
 
-func (r *repository) GetAll() []Transaction {
-	return transacciones
+func (r *repository) GetAll() ([]Transaction, error) {
+	var ts []Transaction
+	r.db.Read(&ts)
+	return ts, nil
 }
 
-func (r *repository) GetByID(id int) *Transaction {
+func (r *repository) GetByID(id int) (Transaction, error) {
+	var transacciones []Transaction
+
+	if err := r.db.Read(&transacciones); err != nil {
+		return Transaction{}, err
+	}
+
 	for _, t := range transacciones {
 		if t.ID == id {
-			return &t
+			return t, nil
 		}
 	}
-	return nil
+	return Transaction{}, fmt.Errorf("error: unknown transaction with ID %d", id)
 }
 
 func (r *repository) GetField(v interface{}, name string) (interface{}, error) {
@@ -87,21 +87,49 @@ func (r *repository) GetField(v interface{}, name string) (interface{}, error) {
 	return fv, nil
 }
 
-func (r *repository) GenID() int {
-	lastId := 0
-
-	if len(transacciones) > 0 {
-		lastId = transacciones[len(transacciones)-1].ID
+func (r *repository) GenID() (int, error) {
+	var ts []Transaction
+	if err := r.db.Read(&ts); err != nil {
+		return 0, err
 	}
 
-	return lastId + 1
+	lastID := 0
+
+	if len(ts) == 0 {
+		return lastID, nil
+	}
+
+	lastID = ts[len(ts)-1].ID
+
+	return lastID + 1, nil
 }
 
-func (r *repository) Store(tRequest Transaction) {
-	transacciones = append(transacciones, tRequest)
+func (r *repository) Store(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (Transaction, error) {
+	var ts []Transaction
+	r.db.Read(&ts)
+	transaction := Transaction{
+		ID:       id,
+		Codigo:   codigo,
+		Moneda:   moneda,
+		Monto:    monto,
+		Emisor:   emisor,
+		Receptor: receptor,
+		Fecha:    fecha,
+	}
+	ts = append(ts, transaction)
+
+	if err := r.db.Write(ts); err != nil {
+		return Transaction{}, err
+	}
+	return transaction, nil
 }
 
 func (r *repository) Update(newT Transaction, id int) (Transaction, error) {
+	var transacciones []Transaction
+	if err := r.db.Read(&transacciones); err != nil {
+		return Transaction{}, err
+	}
+
 	for i, _ := range transacciones {
 		if transacciones[i].ID == id {
 			transacciones[i] = newT
@@ -113,6 +141,12 @@ func (r *repository) Update(newT Transaction, id int) (Transaction, error) {
 }
 
 func (r *repository) Delete(id int) error {
+	var transacciones []Transaction
+
+	if err := r.db.Read(&transacciones); err != nil {
+		return err
+	}
+
 	for i, _ := range transacciones {
 		if transacciones[i].ID == id {
 			transacciones = append(transacciones[:i], transacciones[i+1:]...)
@@ -124,6 +158,12 @@ func (r *repository) Delete(id int) error {
 }
 
 func (r *repository) Patch(id int, codigo string, monto int) (Transaction, error) {
+	var transacciones []Transaction
+
+	if err := r.db.Read(&transacciones); err != nil {
+		return Transaction{}, err
+	}
+
 	for i, _ := range transacciones {
 		if transacciones[i].ID == id {
 			transacciones[i].Codigo = codigo

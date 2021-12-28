@@ -1,0 +1,38 @@
+[
+ {
+  "id": 0,
+  "codigo": "123abcfMn",
+  "moneda": "USD",
+  "monto": 5000,
+  "emisor": "Miguel Angel",
+  "receptor": "Peter Parker",
+  "fecha": "27-12-2021"
+ },
+ {
+  "id": 1,
+  "codigo": "dLc56yftFH",
+  "moneda": "COP",
+  "monto": 4100000,
+  "emisor": "Miguel Angel",
+  "receptor": "Tony Stark",
+  "fecha": "27-12-2021"
+ },
+ {
+  "id": 2,
+  "codigo": "133HG576OP",
+  "moneda": "COP",
+  "monto": 271000,
+  "emisor": "Tony Stark",
+  "receptor": "Stark Industries",
+  "fecha": "27-12-2021"
+ },
+ {
+  "id": 3,
+  "codigo": "02WcfG99TT",
+  "moneda": "USD",
+  "monto": 500000,
+  "emisor": "Tony Stark",
+  "receptor": "Stark Industries",
+  "fecha": "27-12-2021"
+ }
+]
