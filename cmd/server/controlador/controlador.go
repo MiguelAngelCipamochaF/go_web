@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/MiguelAngelCipamochaF/go-web/internal/transacciones"
+	"github.com/MiguelAngelCipamochaF/go-web/pkg/web"
 	"github.com/gin-gonic/gin"
 )
 
@@ -51,10 +52,10 @@ func (t *Transaction) GetAll() gin.HandlerFunc {
 				}
 			}
 
-			ctx.JSON(200, filtrados)
+			ctx.JSON(200, web.NewResponse(200, filtrados, ""))
 			return
 		}
-		ctx.JSON(200, transactions)
+		ctx.JSON(200, web.NewResponse(200, transactions, ""))
 	}
 }
 
@@ -66,13 +67,11 @@ func (t *Transaction) GetByID() gin.HandlerFunc {
 		filtrado, err := t.service.GetByID(intId)
 
 		if err != nil {
-			ctx.JSON(404, gin.H{
-				"error": err.Error(),
-			})
+			ctx.JSON(404, web.NewResponse(404, nil, err.Error()))
 			return
 		}
 
-		ctx.JSON(200, filtrado)
+		ctx.JSON(200, web.NewResponse(200, filtrado, ""))
 	}
 }
 
@@ -81,17 +80,13 @@ func (t *Transaction) Store() gin.HandlerFunc {
 		token := c.GetHeader("token")
 
 		if token != os.Getenv("TOKEN") {
-			c.JSON(401, gin.H{
-				"error": "no tiene permisos para realizar la peticion solicitada",
-			})
+			c.JSON(401, web.NewResponse(401, nil, "error: no tiene permisos para realizar la peticion solicitada"))
 			return
 		}
 
 		var trnsRequest transacciones.Transaction
 		if err := c.ShouldBindJSON(&trnsRequest); err != nil {
-			c.JSON(404, gin.H{
-				"error": err.Error(),
-			})
+			c.JSON(404, web.NewResponse(404, nil, err.Error()))
 			return
 		}
 
@@ -113,7 +108,7 @@ func (t *Transaction) Store() gin.HandlerFunc {
 
 		trnsRequest.ID, _ = t.service.GenID()
 
-		c.JSON(200, trnsRequest)
+		c.JSON(200, web.NewResponse(200, trnsRequest, ""))
 
 		t.service.Store(trnsRequest.ID, trnsRequest.Codigo, trnsRequest.Moneda, trnsRequest.Monto, trnsRequest.Emisor, trnsRequest.Receptor, trnsRequest.Fecha)
 	}
@@ -128,9 +123,7 @@ func (t *Transaction) Update() gin.HandlerFunc {
 		var modified transacciones.Transaction
 
 		if err := c.ShouldBindJSON(&modified); err != nil {
-			c.JSON(404, gin.H{
-				"error": err.Error(),
-			})
+			c.JSON(404, web.NewResponse(404, nil, err.Error()))
 			return
 		}
 
@@ -151,13 +144,11 @@ func (t *Transaction) Update() gin.HandlerFunc {
 		newT, err := t.service.Update(modified, intId)
 
 		if err != nil {
-			c.JSON(404, gin.H{
-				"error": err.Error(),
-			})
+			c.JSON(404, web.NewResponse(404, nil, err.Error()))
 			return
 		}
 
-		c.JSON(200, newT)
+		c.JSON(200, web.NewResponse(200, newT, ""))
 	}
 }
 
@@ -167,14 +158,10 @@ func (t *Transaction) Delete() gin.HandlerFunc {
 		intId, _ := strconv.Atoi(id)
 
 		if t.service.Delete(intId) != nil {
-			c.JSON(404, gin.H{
-				"error": t.service.Delete(intId).Error(),
-			})
+			c.JSON(404, web.NewResponse(404, nil, t.service.Delete(intId).Error()))
 			return
 		}
-		c.JSON(200, gin.H{
-			"success": true,
-		})
+		c.JSON(200, web.NewResponse(200, `"success": "true"`, ""))
 	}
 }
 
@@ -186,35 +173,27 @@ func (t *Transaction) Patch() gin.HandlerFunc {
 		var modified transacciones.Transaction
 
 		if err := c.ShouldBindJSON(&modified); err != nil {
-			c.JSON(404, gin.H{
-				"error": err.Error(),
-			})
+			c.JSON(404, web.NewResponse(404, nil, err.Error()))
 			return
 		}
 
 		if modified.Codigo == "" {
-			c.JSON(400, gin.H{
-				"error": "el codigo de la transaccion es requerido",
-			})
+			c.JSON(400, web.NewResponse(400, nil, "error: el codigo de la transaccion es requerido"))
 			return
 		}
 
 		if modified.Monto == 0 {
-			c.JSON(400, gin.H{
-				"error": "el codigo de la transaccion es requerido",
-			})
+			c.JSON(400, web.NewResponse(400, nil, "error: el monto de la transaccion es requerido"))
 			return
 		}
 
 		newT, err := t.service.Patch(intId, modified.Codigo, modified.Monto)
 
 		if err != nil {
-			c.JSON(404, gin.H{
-				"error": err.Error(),
-			})
+			c.JSON(404, web.NewResponse(404, nil, err.Error()))
 			return
 		}
 
-		c.JSON(200, newT)
+		c.JSON(200, web.NewResponse(200, newT, ""))
 	}
 }

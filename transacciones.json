@@ -1,12 +1,12 @@
 [
  {
   "id": 0,
-  "codigo": "123abcfMn",
+  "codigo": "99OPdfgaL",
   "moneda": "USD",
-  "monto": 5000,
+  "monto": 2300,
   "emisor": "Miguel Angel",
-  "receptor": "Peter Parker",
-  "fecha": "27-12-2021"
+  "receptor": "Rengoku",
+  "fecha": "29-12-2021"
  },
  {
   "id": 1,
@@ -27,12 +27,12 @@
   "fecha": "27-12-2021"
  },
  {
-  "id": 3,
-  "codigo": "02WcfG99TT",
+  "id": 4,
+  "codigo": "345MMnL32",
   "moneda": "USD",
-  "monto": 500000,
-  "emisor": "Tony Stark",
-  "receptor": "Stark Industries",
-  "fecha": "27-12-2021"
+  "monto": 8000,
+  "emisor": "Lucas H",
+  "receptor": "Rengoku",
+  "fecha": "29-12-2021"
  }
 ]

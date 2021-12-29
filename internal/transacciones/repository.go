@@ -134,6 +134,7 @@ func (r *repository) Update(newT Transaction, id int) (Transaction, error) {
 		if transacciones[i].ID == id {
 			transacciones[i] = newT
 			transacciones[i].ID = id
+			r.db.Write(transacciones)
 			return transacciones[i], nil
 		}
 	}
@@ -150,6 +151,7 @@ func (r *repository) Delete(id int) error {
 	for i, _ := range transacciones {
 		if transacciones[i].ID == id {
 			transacciones = append(transacciones[:i], transacciones[i+1:]...)
+			r.db.Write(transacciones)
 			return nil
 		}
 	}
@@ -168,6 +170,7 @@ func (r *repository) Patch(id int, codigo string, monto int) (Transaction, error
 		if transacciones[i].ID == id {
 			transacciones[i].Codigo = codigo
 			transacciones[i].Monto = monto
+			r.db.Write(transacciones)
 			return transacciones[i], nil
 		}
 	}

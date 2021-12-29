@@ -45,5 +45,17 @@ func (fs *FileStore) Write(data interface{}) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(fs.FileName, fileData, 0644)
+	f, err := os.OpenFile(fs.FileName, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = f.Write(fileData)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
