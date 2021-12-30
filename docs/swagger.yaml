@@ -1,0 +1,174 @@
+definitions:
+  controlador.request:
+    properties:
+      codigo:
+        type: string
+      emisor:
+        type: string
+      fecha:
+        type: string
+      id:
+        type: integer
+      moneda:
+        type: string
+      monto:
+        type: integer
+      receptor:
+        type: string
+    type: object
+  web.Response:
+    properties:
+      code:
+        type: string
+      data: {}
+      error:
+        type: string
+    type: object
+info:
+  contact:
+    name: API Support
+    url: https://developers.mercadolibre.com.ar/support
+  description: This API Handle MELI Transactions.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://developers.mercadolibre.com.ar/es_ar/terminos-y-condiciones
+  title: MELI Bootcamp GO API
+  version: "1.0"
+paths:
+  /transacciones:
+    get:
+      consumes:
+      - application/json
+      description: get transactions
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: List transactions
+      tags:
+      - Transactions
+    post:
+      consumes:
+      - application/json
+      description: store transactions
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: Transaction to store
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/controlador.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: Store transactions
+      tags:
+      - Transactions
+  /transacciones/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete the entire transaction with the desired ID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction to delete
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/controlador.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: Delete transactions
+      tags:
+      - Transactions
+    get:
+      consumes:
+      - application/json
+      description: get transactions with the given ID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: List transactions with ID
+      tags:
+      - Transactions
+    put:
+      consumes:
+      - application/json
+      description: update the entire transaction with the desired ID
+      parameters:
+      - description: token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction to update
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/controlador.request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.Response'
+      summary: Update transactions
+      tags:
+      - Transactions
+swagger: "2.0"

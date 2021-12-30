@@ -10,7 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type Request struct {
+type request struct {
+	ID       int    `json:"id"`
+	Codigo   string `json:"codigo"`
+	Moneda   string `json:"moneda"`
+	Monto    int    `json:"monto"`
+	Emisor   string `json:"emisor"`
+	Receptor string `json:"receptor"`
+	Fecha    string `json:"fecha"`
 }
 
 type Transaction struct {
@@ -23,6 +30,15 @@ func NewTransaction(t transacciones.Service) *Transaction {
 	}
 }
 
+// ListTransactions godoc
+// @Summary List transactions
+// @Tags Transactions
+// @Description get transactions
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Success 200 {object} web.Response
+// @Router /transacciones [get]
 func (t *Transaction) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		transactions, err := t.service.GetAll()
@@ -59,6 +75,16 @@ func (t *Transaction) GetAll() gin.HandlerFunc {
 	}
 }
 
+// ListTransactionsWithID godoc
+// @Summary List transactions with ID
+// @Tags Transactions
+// @Description get transactions with the given ID
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param id path int true "ID"
+// @Success 200 {object} web.Response
+// @Router /transacciones/{id} [get]
 func (t *Transaction) GetByID() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id := ctx.Param("id")
@@ -75,6 +101,16 @@ func (t *Transaction) GetByID() gin.HandlerFunc {
 	}
 }
 
+// StoreTransactions godoc
+// @Summary Store transactions
+// @Tags Transactions
+// @Description store transactions
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param transaction body request true "Transaction to store"
+// @Success 200 {object} web.Response
+// @Router /transacciones [post]
 func (t *Transaction) Store() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("token")
@@ -84,7 +120,7 @@ func (t *Transaction) Store() gin.HandlerFunc {
 			return
 		}
 
-		var trnsRequest transacciones.Transaction
+		var trnsRequest request
 		if err := c.ShouldBindJSON(&trnsRequest); err != nil {
 			c.JSON(404, web.NewResponse(404, nil, err.Error()))
 			return
@@ -114,6 +150,17 @@ func (t *Transaction) Store() gin.HandlerFunc {
 	}
 }
 
+// UpdateTransactions godoc
+// @Summary Update transactions
+// @Tags Transactions
+// @Description update the entire transaction with the desired ID
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param id path int true "ID"
+// @Param transaction body request true "Transaction to update"
+// @Success 200 {object} web.Response
+// @Router /transacciones/{id} [put]
 func (t *Transaction) Update() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
@@ -152,6 +199,17 @@ func (t *Transaction) Update() gin.HandlerFunc {
 	}
 }
 
+// DeleteTransactions godoc
+// @Summary Delete transactions
+// @Tags Transactions
+// @Description delete the entire transaction with the desired ID
+// @Accept json
+// @Produce json
+// @Param token header string true "token"
+// @Param id path int true "ID"
+// @Param transaction body request true "Transaction to delete"
+// @Success 200 {object} web.Response
+// @Router /transacciones/{id} [delete]
 func (t *Transaction) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
@@ -161,7 +219,7 @@ func (t *Transaction) Delete() gin.HandlerFunc {
 			c.JSON(404, web.NewResponse(404, nil, t.service.Delete(intId).Error()))
 			return
 		}
-		c.JSON(200, web.NewResponse(200, `"success": "true"`, ""))
+		c.JSON(200, web.NewResponse(200, "Transaction deleted!", ""))
 	}
 }
 
@@ -170,7 +228,7 @@ func (t *Transaction) Patch() gin.HandlerFunc {
 		id := c.Param("id")
 		intId, _ := strconv.Atoi(id)
 
-		var modified transacciones.Transaction
+		var modified request
 
 		if err := c.ShouldBindJSON(&modified); err != nil {
 			c.JSON(404, web.NewResponse(404, nil, err.Error()))
