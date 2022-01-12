@@ -33,8 +33,6 @@ type repository struct {
 	db store.Store
 }
 
-var transacciones []Transaction
-
 func NewRepository(db store.Store) Repository {
 	return &repository{
 		db: db,
@@ -43,7 +41,10 @@ func NewRepository(db store.Store) Repository {
 
 func (r *repository) GetAll() ([]Transaction, error) {
 	var ts []Transaction
-	r.db.Read(&ts)
+	err := r.db.Read(&ts)
+	if err != nil {
+		return nil, err
+	}
 	return ts, nil
 }
 
@@ -138,7 +139,7 @@ func (r *repository) Update(newT Transaction, id int) (Transaction, error) {
 			return transacciones[i], nil
 		}
 	}
-	return Transaction{}, fmt.Errorf("error: no existe transaccion con ID: %d", id)
+	return Transaction{}, errors.New("error: no existe transaccion con ese ID")
 }
 
 func (r *repository) Delete(id int) error {
@@ -156,7 +157,7 @@ func (r *repository) Delete(id int) error {
 		}
 	}
 
-	return fmt.Errorf("error: no existe transaccion con ID: %v", id)
+	return errors.New("error: no existe transaccion con ese ID")
 }
 
 func (r *repository) Patch(id int, codigo string, monto int) (Transaction, error) {
