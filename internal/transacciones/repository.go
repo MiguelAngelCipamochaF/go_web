@@ -107,7 +107,7 @@ func (r *repository) GenID() (int, error) {
 
 func (r *repository) Store(id int, codigo string, moneda string, monto int, emisor string, receptor string, fecha string) (Transaction, error) {
 	var ts []Transaction
-	r.db.Read(&ts)
+	_ = r.db.Read(&ts)
 	transaction := Transaction{
 		ID:       id,
 		Codigo:   codigo,
@@ -131,11 +131,11 @@ func (r *repository) Update(newT Transaction, id int) (Transaction, error) {
 		return Transaction{}, err
 	}
 
-	for i, _ := range transacciones {
+	for i := range transacciones {
 		if transacciones[i].ID == id {
 			transacciones[i] = newT
 			transacciones[i].ID = id
-			r.db.Write(transacciones)
+			_ = r.db.Write(transacciones)
 			return transacciones[i], nil
 		}
 	}
@@ -149,10 +149,10 @@ func (r *repository) Delete(id int) error {
 		return err
 	}
 
-	for i, _ := range transacciones {
+	for i := range transacciones {
 		if transacciones[i].ID == id {
 			transacciones = append(transacciones[:i], transacciones[i+1:]...)
-			r.db.Write(transacciones)
+			_ = r.db.Write(transacciones)
 			return nil
 		}
 	}
@@ -167,11 +167,11 @@ func (r *repository) Patch(id int, codigo string, monto int) (Transaction, error
 		return Transaction{}, err
 	}
 
-	for i, _ := range transacciones {
+	for i := range transacciones {
 		if transacciones[i].ID == id {
 			transacciones[i].Codigo = codigo
 			transacciones[i].Monto = monto
-			r.db.Write(transacciones)
+			_ = r.db.Write(transacciones)
 			return transacciones[i], nil
 		}
 	}

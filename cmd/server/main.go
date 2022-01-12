@@ -49,5 +49,5 @@ func main() {
 		trns.DELETE("/:id", controller.Delete())
 		trns.PATCH("/:id", controller.Patch())
 	}
-	router.Run()
+	_ = router.Run()
 }

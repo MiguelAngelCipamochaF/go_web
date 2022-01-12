@@ -146,7 +146,7 @@ func (t *Transaction) Store() gin.HandlerFunc {
 
 		c.JSON(200, web.NewResponse(200, trnsRequest, ""))
 
-		t.service.Store(trnsRequest.ID, trnsRequest.Codigo, trnsRequest.Moneda, trnsRequest.Monto, trnsRequest.Emisor, trnsRequest.Receptor, trnsRequest.Fecha)
+		_, _ = t.service.Store(trnsRequest.ID, trnsRequest.Codigo, trnsRequest.Moneda, trnsRequest.Monto, trnsRequest.Emisor, trnsRequest.Receptor, trnsRequest.Fecha)
 	}
 }
 
