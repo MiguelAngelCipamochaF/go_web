@@ -1,0 +1,29 @@
+[
+ {
+  "id": 0,
+  "codigo": "002",
+  "moneda": "USD",
+  "monto": 4500,
+  "emisor": "Miguel Cipamocha",
+  "receptor": "Miles Morales",
+  "fecha": "12-01-2022"
+ },
+ {
+  "id": 1,
+  "codigo": "dLc56yftFH",
+  "moneda": "COP",
+  "monto": 4100000,
+  "emisor": "Miguel Angel",
+  "receptor": "Tony Stark",
+  "fecha": "27-12-2021"
+ },
+ {
+  "id": 4,
+  "codigo": "345MMnL32",
+  "moneda": "USD",
+  "monto": 8000,
+  "emisor": "Lucas H",
+  "receptor": "Rengoku",
+  "fecha": "29-12-2021"
+ }
+]
